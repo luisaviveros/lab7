@@ -1,3 +1,4 @@
+// Código original del archivo App.js
 const fieldset0 = document.getElementById("fieldset0");
 const fieldset1 = document.getElementById("fieldset1");
 const fieldset2 = document.getElementById("fieldset2");
@@ -25,7 +26,6 @@ if (estadoTarea0) {
 
 const tarea1 = "Ir a la tienda";
 const estadoTarea1 = false;
-
 
 if (estadoTarea1){
     activados = activados + 1;
@@ -127,11 +127,8 @@ const contador = document.getElementById("contador");
 
 const inputs = document.querySelectorAll('fieldset input');
 
-
 inputs.forEach((input, index) => {
-    
     input.addEventListener('change', () => {
-        
         let activados = 0;
         let desactivados = 0;
 
@@ -195,7 +192,6 @@ inputs.forEach((input, index) => {
             fieldset9.classList.toggle('desactivado');
         };
 
-
         inputs.forEach(input => {
             if (input.checked) {
                 activados++;
@@ -207,3 +203,31 @@ inputs.forEach((input, index) => {
         contador.innerHTML = "La cantidad de tareas completadas es de " + activados + " y la cantidad de tareas sin completar es de " + desactivados + ".";
     });
 });
+
+
+window.onload = function() {
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    todos.forEach((todo, index) => {
+        const fieldset = document.getElementById(`fieldset${index}`);
+        const labelClass = todo.completed ? 'activado' : 'desactivado';
+        fieldset.innerHTML = `<label class='${labelClass}'>${todo.text}</label><input type='checkbox' class='${labelClass} check' ${todo.completed ? 'checked' : ''} />`;
+
+    
+        fieldset.querySelector('input').addEventListener('change', function() {
+            todo.completed = !todo.completed;
+            localStorage.setItem('todos', JSON.stringify(todos));
+            this.parentElement.querySelector('label').className = todo.completed ? 'activado' : 'desactivado';
+            this.className = todo.completed ? 'activado check' : 'desactivado check';
+            actualizarContador();
+        });
+    });
+    actualizarContador();
+};
+
+
+function actualizarContador() {
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    let activados = todos.filter(todo => todo.completed).length;
+    let desactivados = todos.length - activados;
+    document.getElementById('contador').innerText = `La cantidad de tareas completadas es de ${activados} y la cantidad de tareas sin completar es de ${desactivados}.`;
+}
